@@ -1,0 +1,164 @@
+package fp.grados.tipos;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import fp.grados.excepciones.ExcepcionGradoNoValido;
+
+public class GradoImpl implements Grado {
+	
+	private String nombre;
+	private Set<Asignatura> asignaturasObligatorias;
+	private Set<Asignatura> asignaturasOptativas;
+	private Double numeroMinimoCreditosOptativas;
+
+	
+	public GradoImpl(String nombre, Set<Asignatura> asignaturasObligatorias, Set<Asignatura> asignaturasOptativas, Double numeroMinimoCreditosOptativas ){
+		this.nombre = nombre;
+		this.asignaturasObligatorias = new HashSet<Asignatura>(asignaturasObligatorias);
+		checkAsignaturasOptativas(asignaturasOptativas);
+		this.asignaturasOptativas = new HashSet<Asignatura>(asignaturasOptativas);
+		checknumMinCred(numeroMinimoCreditosOptativas);
+		this.numeroMinimoCreditosOptativas = numeroMinimoCreditosOptativas;
+	}
+
+	public boolean equals (Object obj){
+		boolean res = false;
+		if(obj instanceof Grado){
+			Grado a = (Grado)obj;
+			res = this.getNombre().equals(a.getNombre());
+		}
+	return res;
+	}
+	
+	
+	public int hashCode(){
+		return this.getNombre().hashCode()*31;
+	}
+	
+	//Criterio de orden natural
+	
+	public int compareTo(Grado a){
+		return this.getNombre().compareTo(a.getNombre());
+	}
+	
+	//Representaci�n
+	
+	public String toString(){
+		return getNombre();
+	}
+	
+	
+	public void checkAsignaturasOptativas(Set<Asignatura> asignaturasOptativas){
+		Double creditos = 0.0;
+		if(!(asignaturasOptativas.isEmpty())){
+		for(Asignatura a : asignaturasOptativas){
+			creditos = a.getCreditos();
+			break;
+		}
+		for(Asignatura d : asignaturasOptativas){
+			if(!d.getCreditos().equals(creditos)){
+				throw new ExcepcionGradoNoValido("Todas las asignaturas optativas de un grado deben tener el mismo n�mero de cr�ditos.");
+				}
+			}
+		}
+	}
+	
+	
+	public void checknumMinCred(Double numeroMinimoCreditosOptativas){
+		Double cred =0.0;
+		for(Asignatura a : getAsignaturasOptativas()){
+			cred += a.getCreditos();
+		}
+		if(numeroMinimoCreditosOptativas < 0 || numeroMinimoCreditosOptativas > cred){
+			throw new ExcepcionGradoNoValido("El n�mero m�nimo de cr�ditos de asignaturas optativas"
+					+ " que debe cursar un alumno debe estar comprendido entre cero y el n�mero"
+					+ " total de cr�ditos de asignaturas optativas del grado.");
+		}
+	}
+
+	@Override
+	public String getNombre() {
+		// TODO Auto-generated method stub
+		return nombre;
+	}
+
+	@Override
+	public Double getNumeroMinimoCreditosOptativas() {
+		// TODO Auto-generated method stub
+		return numeroMinimoCreditosOptativas;
+	}
+
+	@Override
+	public Set<Asignatura> getAsignaturasObligatorias() {
+		// TODO Auto-generated method stub
+		return asignaturasObligatorias;
+	}
+
+	@Override
+	public Set<Asignatura> getAsignaturasOptativas() {
+		// TODO Auto-generated method stub
+		return asignaturasOptativas;
+	}
+
+	@Override
+	public Double getNumeroTotalCreditos() {
+		Double res = 0.0;
+		for(Asignatura a : getAsignaturasObligatorias()){
+			res += a.getCreditos();
+		}
+		return res+getNumeroMinimoCreditosOptativas();
+	}
+
+	@Override
+	public Set<Departamento> getDepartamentos() {
+		Set<Departamento> depar = new HashSet<Departamento>();
+		for(Asignatura a : getAsignaturasObligatorias()){
+			depar.add(a.getDepartamento());
+		}
+		for(Asignatura e : getAsignaturasOptativas()){
+			depar.add(e.getDepartamento());
+		}
+		return depar;
+	}
+
+	@Override
+	public Set<Profesor> getProfesores() {
+		Set<Profesor> profesores = new HashSet<Profesor>();
+		for(Departamento a : getDepartamentos()){
+			profesores.addAll(a.getProfesores());
+		}
+		return profesores;
+	}
+
+	@Override
+	public Set<Asignatura> getAsignaturas(Integer curso) {
+		Set<Asignatura> asignaturasCurso = new HashSet<Asignatura>();
+		for(Asignatura a : getAsignaturasObligatorias()){
+			if(a.getCurso() == curso){
+			asignaturasCurso.add(a);
+			}
+		}
+		for(Asignatura e : getAsignaturasOptativas()){
+			if(e.getCurso() == curso){
+				asignaturasCurso.add(e);
+			}
+		}
+		return asignaturasCurso;
+	}
+
+	@Override
+	public Asignatura getAsignatura(String codigo) {
+		Set<Asignatura> asignaturasCurso = new HashSet<Asignatura>();
+		Asignatura res = null;
+		asignaturasCurso.addAll(asignaturasObligatorias);
+		asignaturasCurso.addAll(asignaturasOptativas);
+		for(Asignatura a : asignaturasCurso){
+			if(a.getCodigo() == codigo){
+				res = a;
+			}
+		}
+		return res;
+	}
+
+}

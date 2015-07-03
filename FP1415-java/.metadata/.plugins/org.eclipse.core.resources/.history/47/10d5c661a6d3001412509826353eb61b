@@ -1,0 +1,199 @@
+package fp.grados.tipos;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import fp.grados.excepciones.ExcepcionProfesorNoValido;
+import fp.grados.excepciones.ExcepcionProfesorOperacionNoPermitida;
+
+public class ProfesorImpl extends PersonaImpl implements Profesor {
+
+	private Categoria categoria;
+	private SortedSet<Tutoria> tutorias;
+	private Departamento departamento;
+	private List<Asignatura> asignaturas;
+	private List<Double> creditos;
+	private final static Double CREDITOS_MAXIMO = 24.00;
+	public ProfesorImpl(String dni, String nombre, String apellidos,
+			 LocalDate fechaNacimiento,String email, Categoria categoria,
+			Departamento departamento) {
+
+		super(dni, nombre, apellidos, fechaNacimiento, email);
+
+		checkFechaNacimiento(fechaNacimiento);
+		this.categoria = categoria;
+		this.tutorias = new TreeSet<Tutoria>();
+		this.departamento = departamento;
+		this.creditos=new LinkedList<Double>();
+		this.asignaturas=new LinkedList<Asignatura>();
+
+	}
+
+	private void checkFechaNacimiento(LocalDate fechaNacimiento) {
+		
+		if (fechaNacimiento.compareTo(LocalDate.now().minusYears(18)) > 0) {
+			throw new ExcepcionProfesorNoValido(
+					"La edad del profesor debe ser mayor que 18");
+		}
+	}
+
+	
+	
+	public String toString() {
+		return super.toString() + " (" + getCategoria() + ")";
+	}
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public SortedSet<Tutoria> getTutorias() {
+		return new TreeSet<Tutoria>(tutorias);
+	}
+
+	public void setCategoria(Categoria categoria) {
+
+		this.categoria = categoria;
+	}
+	
+	public void setFechaNacimiento(LocalDate fechaNacimiento){
+		checkFechaNacimiento(fechaNacimiento);
+		super.setFechaNacimiento(fechaNacimiento);
+	}
+
+	public void nuevaTutoria(LocalTime horaComienzo, Integer duracionMinutos,
+			DayOfWeek dia) {
+
+		TutoriaImpl t = new TutoriaImpl(dia, horaComienzo, duracionMinutos);
+		tutorias.add(t);
+	}
+
+	public void borraTutoria(LocalTime horaComienzo, DayOfWeek dia) {
+
+		for (Tutoria t : tutorias) {
+
+			if (t.getHoraComienzo().equals(horaComienzo)
+					&& t.getDiaSemana().equals(dia)) {
+				this.tutorias.remove(t);
+			}
+		}
+	}
+	
+	public Departamento getDepartamento(){
+		return departamento;
+	}
+	
+	public void setDepartamento(Departamento departamento){
+		if(departamento != this.departamento){
+			Departamento AntiguoDepartamento = getDepartamento();
+			this.departamento=departamento;
+			if(AntiguoDepartamento != null){
+				AntiguoDepartamento.eliminaProfesor(this);
+			}
+			if(departamento != null){
+				departamento.nuevoProfesor(this);
+			}
+		}
+	}
+	
+	public void setDepartamento(Departamento nuevoDpto) {
+		if(nuevoDpto != this.departamento){
+			Departamento oldDpto = this.departamento;
+			this.departamento = nuevoDpto;
+			if(oldDpto != null){
+				oldDpto.eliminaProfesor(this);
+			}
+			if(nuevoDpto != null){
+				nuevoDpto.nuevoProfesor(this);
+			}
+		}
+		
+	}
+
+	public void borraTutorias() {
+
+		tutorias.clear();
+
+	}
+
+	public List<Asignatura> getAsignaturas() {
+		return new LinkedList<Asignatura>(asignaturas);
+	}
+
+	public List<Double> getCreditos() {
+		return new LinkedList<Double>(creditos);
+	}
+
+	public Double getDedicacionTotal() {
+		
+		Double res = 0.00;
+		
+		for (Double c: creditos){
+			res = res + c;
+		}
+		return res;
+	}
+
+	public void imparteAsignatura(Asignatura asig, Double dedicacion) {
+//		checkCreditos(dedicacion);
+//		checkAsignatura(asig);
+		checkImparte(dedicacion, asig);
+		
+		if(this.asignaturas.contains(asig)){
+			this.creditos.add(this.asignaturas.indexOf(asig), dedicacion);
+		}else{
+			this.asignaturas.add(asig);
+			this.creditos.add(this.asignaturas.indexOf(asig), dedicacion);
+		}
+	}
+
+	private void checkImparte(Double dedicacion, Asignatura asig) {
+		if(dedicacion <= 0 && dedicacion <= asig.getCreditos()){
+			throw new ExcepcionProfesorOperacionNoPermitida("La dedicación debe ser mayor que 0 y menor que el numero de creditos de la asignatura");
+		}
+		if(this.getDepartamento() != asig.getDepartamento()){
+			throw new ExcepcionProfesorOperacionNoPermitida("El profesor pertenece a un departamento que no imparte esa asignatura");
+		}
+		if(getDedicacionTotal() + dedicacion > CREDITOS_MAXIMO){
+			throw new ExcepcionProfesorOperacionNoPermitida("Un profesor no puede tener mas de 24 Creditos");
+		}
+	}
+	
+//	private void checkCreditos(Double dedicacion) {
+//		if(dedicacion <= 0 && dedicacion <= asig.getCreditos()){
+//			throw new ExcepcionProfesorOperacionNoPermitida("La dedicación debe ser mayor que 0 y menor que el numero de creditos de la asignatura");
+//		}
+//	}
+
+
+
+//	private void checkAsignatura(Asignatura asig) {
+//		if(this.getDepartamento() != asig.getDepartamento()){
+//			throw new ExcepcionProfesorOperacionNoPermitida("El profesor pertenece a un departamento que no imparte esa asignatura");
+//		}
+//	}
+
+	public Double dedicacionAsignatura(Asignatura asig) {
+		Double res = 0.00;
+		
+		if(asignaturas.contains(asig)){
+			for(Asignatura a: asignaturas){
+				
+				if(a.equals(asig)){
+					res = creditos.get(asignaturas.indexOf(a));
+				}
+			}
+		}		
+		
+		return res;
+	}
+
+	public void eliminaAsignatura(Asignatura asig) {
+		this.asignaturas.remove(asig);
+	}
+}

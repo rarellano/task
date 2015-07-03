@@ -1,0 +1,114 @@
+package fp.grados.tipos;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import fp.grados.excepciones.ExcepcionExpedienteOperacionNoPermitida;
+
+public class ExpedienteImpl implements Expediente {
+	
+	private List<Nota> notas;
+	
+
+	public ExpedienteImpl() {
+		this.notas = new ArrayList<Nota>();
+	}
+
+	public String toString(){
+		return getNotas().toString();
+
+	}
+	
+	public boolean equals(Object o) {
+
+		boolean res = false;
+		Expediente exp= (Expediente) o;
+		if (o instanceof Expediente && getNotas().equals(exp.getNotas())) {
+			res = true;
+		}
+
+		return res;
+
+	}
+	
+	public int hashCode(){
+		
+		return getNotas().hashCode();
+	}
+
+	@Override
+	public List<Nota> getNotas() {
+		return notas;
+	}
+
+	@Override
+	public Double getNotaMedia() {
+		
+		Double sum = 0.00;
+
+		for (Nota n : notas) {
+			if(n.getValor() >= 5){
+				sum = sum + n.getValor();
+			}
+		}
+		
+		Double notaMedia = sum / notas.size();
+
+		return notaMedia;
+	}
+
+	private void checkExpediente(Nota n) {
+		if (notas.contains(n)){
+			for(Nota a: notas){
+				if(n.getAsignatura().equals(a.getAsignatura()) || n.getCursoAcademico().equals(a.getCursoAcademico())){
+					throw new ExcepcionExpedienteOperacionNoPermitida();
+				}
+			}
+		}
+//		Boolean res = false;
+//		
+//		
+//		
+//		Set<Nota> prueba = new HashSet<Nota>();
+//		
+//		for(Nota nl: getNotas()){
+//			if((nl.getAsignatura().equals(n.getAsignatura())) && (nl.getCursoAcademico().equals(n.getCursoAcademico()))){
+//				prueba.add(n);
+//			}
+//		}
+//		if(prueba.size() >= 2){
+//			res = true;
+//		}
+//		if(res == false)
+//			throw new ExcepcionExpedienteOperacionNoPermitida("No se puede tener m�s de dos notas de una misma asignatura y mismo curso.");
+	}
+
+	@Override
+	public void nuevaNota(Nota n) {
+		checkExpediente(n);
+		Boolean b = false;
+
+		for (int i = 0; i < notas.size(); i++) {
+			if (b == false) {
+				if (notas.get(i).equals(n)) {
+					notas.remove(i);
+					notas.add(n);
+					b = true;
+				}
+
+			}
+		}
+
+		if (b == false) {
+			notas.add(n);
+		}
+
+		System.out.println("Se añadio la nota de: " + n.getAsignatura());
+		
+		
+
+	}
+
+}

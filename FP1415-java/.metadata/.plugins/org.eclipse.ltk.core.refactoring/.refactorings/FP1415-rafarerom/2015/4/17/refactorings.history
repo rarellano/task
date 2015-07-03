@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;ma&apos; in &apos;fp.grados.tipos.DepartamentoImpl2.getTutoriasPorProfesor()&apos; to &apos;mapa&apos;&#x0A;- Original project: &apos;FP1415-rafarerom&apos;&#x0A;- Original element: &apos;fp.grados.tipos.DepartamentoImpl2.getTutoriasPorProfesor().ma&apos;&#x0A;- Renamed element: &apos;ma&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;ma&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;fp.grados.tipos{DepartamentoImpl2.java[DepartamentoImpl2~getTutoriasPorProfesor@ma!1090!1222!1124!1125!QMap\&lt;QProfesor;QSortedSet\&lt;QTutoria;&gt;;&gt;;!0!false" name="mapa" references="true" stamp="1429556857262" version="1.0"/>
+</session>

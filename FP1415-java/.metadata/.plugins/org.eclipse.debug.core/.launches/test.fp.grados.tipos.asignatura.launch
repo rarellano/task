@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
+<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=FP1415-rafarerom/\/home\/rafa\/Documentos\/us\/Fundamentos de Programacion\/workspace\/FP1415-rafarerom\/FP1415-rafarerom\/lib\/testsE2-1.0.3.jar&lt;test.fp.grados.tipos.asignatura"/>
+<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value=""/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="FP1415-rafarerom"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value=""/>
+</launchConfiguration>

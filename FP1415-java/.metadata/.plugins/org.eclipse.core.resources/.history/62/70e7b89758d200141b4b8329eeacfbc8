@@ -1,0 +1,96 @@
+package fp.grados.tipos;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import fp.grados.excepciones.ExcepcionExpedienteOperacionNoPermitida;
+
+public class ExpedienteImpl implements Expediente {
+	
+	private List<Nota> notas;
+	
+
+	public ExpedienteImpl() {
+		this.notas = new ArrayList<Nota>();
+	}
+
+	public String toString(){
+		return getNotas().toString();
+
+	}
+	
+	public boolean equals(Object o) {
+
+		boolean res = false;
+		Expediente exp= (Expediente) o;
+		if (o instanceof Expediente && getNotas().equals(exp.getNotas())) {
+			res = true;
+		}
+
+		return res;
+
+	}
+	
+	public int hashCode(){
+		
+		return getNotas().hashCode();
+	}
+
+	public List<Nota> getNotas() {
+		return notas;
+	}
+
+	public Double getNotaMedia() {
+		
+		Double sum = 0.00;
+
+		if(getNotas().isEmpty())
+			return sum;
+		
+		for (Nota n : notas) {
+			if(n.getValor() > 5){
+				sum = sum + n.getValor();
+			}
+		}
+		
+		Double notaMedia = sum / (notas.size()-1);
+
+		return notaMedia;
+	}
+
+	private void checkExpediente(Nota nota) {
+
+		int i = 0;
+		for(Nota n: getNotas()){
+			if((n.getAsignatura().equals(nota.getAsignatura())) && (n.getCursoAcademico().equals(nota.getCursoAcademico())))
+				i++;
+			if(i >= 2)
+				throw new ExcepcionExpedienteOperacionNoPermitida("No se puede tener m�s de dos notas de una misma asignatura y mismo curso.");
+			
+		}
+		
+	}
+
+	public void nuevaNota(Nota n) {
+		checkExpediente(n);
+		Boolean b = false;
+
+		for (int i = 0; i < notas.size(); i++) {
+			if (b == false) {
+				if (notas.get(i).equals(n)) {
+					notas.remove(i);
+					notas.add(n);
+					b = true;
+				}
+
+			}
+		}
+
+		if (b == false) {
+			notas.add(n);
+		}
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 2 elements from project &apos;FP1415-rafarerom&apos;&#x0A;- Original project: &apos;FP1415-rafarerom&apos;&#x0A;- Original elements:&#x0A;     helpers-1.0.6.jar&#x0A;     testsE3-1.0.1.jar" description="Delete elements" element1="lib/testsE3-1.0.1.jar" element2="lib/helpers-1.0.6.jar" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="2" stamp="1430740086210" subPackages="false" version="1.0"/>
+</session>
